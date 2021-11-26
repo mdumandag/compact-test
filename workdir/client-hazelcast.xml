@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-5.0.xsd">
+
+    <cluster-name>workers</cluster-name>
+
+    <network>
+        <cluster-members>
+            <!--MEMBERS-->
+        </cluster-members>
+    </network>
+
+    <serialization>
+        <data-serializable-factories>
+            <data-serializable-factory factory-id="2">
+                org.example.serialization.IdentifiedObjectFactory
+            </data-serializable-factory>
+        </data-serializable-factories>
+
+        <portable-factories>
+            <portable-factory factory-id="1">
+                org.example.serialization.PortableObjectFactory
+            </portable-factory>
+        </portable-factories>
+
+        <compact-serialization enabled="true">
+            <registered-classes>
+                <class type-name="small" serializer="org.example.serialization.SmallCompactSerializer">
+                    org.example.objects.SmallCompact
+                </class>
+                <class type-name="large" serializer="org.example.serialization.LargeCompactSerializer">
+                    org.example.objects.LargeCompact
+                </class>
+            </registered-classes>
+        </compact-serialization>
+    </serialization>
+
+</hazelcast-client>
