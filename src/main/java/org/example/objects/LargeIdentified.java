@@ -7,7 +7,7 @@ import org.example.serialization.IdentifiedObjectFactory;
 
 import java.io.IOException;
 
-public class LargeIdentified implements IdentifiedDataSerializable, TestObject {
+public class LargeIdentified implements IdentifiedDataSerializable {
 
     public static final int CLASS_ID = 2;
 
@@ -188,40 +188,6 @@ public class LargeIdentified implements IdentifiedDataSerializable, TestObject {
 
     public SmallIdentified[] getObjectArrayField() {
         return objectArrayField;
-    }
-
-    @Override
-    public String getCreateMappingStatement(String mapName) {
-        return String.format(
-                "CREATE MAPPING \"%s\" (\n"
-                + "  \"booleanArrayField\" OBJECT,\n"
-                + "  \"booleanField\" BOOLEAN,\n"
-                + "  \"byteArrayField\" OBJECT,\n"
-                + "  \"byteField\" TINYINT,\n"
-                + "  \"doubleArrayField\" OBJECT,\n"
-                + "  \"doubleField\" DOUBLE,\n"
-                + "  \"floatArrayField\" OBJECT,\n"
-                + "  \"floatField\" REAL,\n"
-                + "  \"intArrayField\" OBJECT,\n"
-                + "  \"intField\" INTEGER,\n"
-                + "  \"longArrayField\" OBJECT,\n"
-                + "  \"longField\" BIGINT,\n"
-                + "  \"objectArrayField\" OBJECT,\n"
-                + "  \"objectField\" OBJECT,\n"
-                + "  \"shortArrayField\" OBJECT,\n"
-                + "  \"shortField\" SMALLINT,\n"
-                + "  \"stringArrayField\" OBJECT,\n"
-                + "  \"stringField\" VARCHAR\n"
-                + ")\n"
-                + "TYPE IMap\n"
-                + "OPTIONS (\n"
-                + "  'keyFormat' = 'java',\n"
-                + "  'keyJavaClass' = 'java.lang.Integer',\n"
-                + "  'valueFormat' = 'java',\n"
-                + "  'valueJavaClass' = 'org.example.objects.LargeIdentified'"
-                + ")",
-                mapName
-        );
     }
 
 }

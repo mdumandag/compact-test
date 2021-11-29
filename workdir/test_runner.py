@@ -7,18 +7,18 @@ OBJECT_KINDS = [
     "COMPACT",
     "PORTABLE",
     "IDENTIFIED",
+    "BYTE_ARRAY",
 ]
-
 
 OBJECT_SIZES = [
     "SMALL",
     "LARGE",
 ]
 
-
 READ_TEST_CLASS_NAME = "org.example.tests.ReadTest"
 WRITE_TEST_CLASS_NAME = "org.example.tests.WriteTest"
 QUERY_TEST_CLASS_NAME = "org.example.tests.QueryTest"
+OLD_QUERY_ENGINE_TEST_CLASS_NAME = "org.example.tests.OldQueryEngineTest"
 
 
 def write_test_properties(text):
@@ -30,9 +30,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--write", dest="write", action="store_true")
 parser.add_argument("--read", dest="read", action="store_true")
 parser.add_argument("--query", dest="query", action="store_true")
+parser.add_argument("--old-engine-query", dest="old_engine_query", action="store_true")
 
 args = parser.parse_args()
-
 
 throughput_test_template = Template(
     """class=$clazz
@@ -62,12 +62,28 @@ ratePerSecond=10
     """
 )
 
+old_engine_query_throughput_test_template = Template(
+    """class=$clazz
+objectKind=$kind
+objectSize=$size
+    """
+)
+
+old_engine_query_latency_test_template = Template(
+    """class=$clazz
+objectKind=$kind
+objectSize=$size
+ratePerSecond=10
+    """
+)
 
 if args.write:
     for kind in OBJECT_KINDS:
         for size in OBJECT_SIZES:
             test_properties_throughput = throughput_test_template.substitute(
-                clazz=WRITE_TEST_CLASS_NAME, kind=kind, size=size
+                clazz=WRITE_TEST_CLASS_NAME,
+                kind=kind,
+                size=size,
             )
 
             write_test_properties(test_properties_throughput)
@@ -76,7 +92,9 @@ if args.write:
             time.sleep(30)
 
             test_properties_latency = latency_test_template.substitute(
-                clazz=WRITE_TEST_CLASS_NAME, kind=kind, size=size
+                clazz=WRITE_TEST_CLASS_NAME,
+                kind=kind,
+                size=size,
             )
 
             write_test_properties(test_properties_latency)
@@ -88,7 +106,9 @@ if args.read:
     for kind in OBJECT_KINDS:
         for size in OBJECT_SIZES:
             test_properties_throughput = throughput_test_template.substitute(
-                clazz=READ_TEST_CLASS_NAME, kind=kind, size=size
+                clazz=READ_TEST_CLASS_NAME,
+                kind=kind,
+                size=size,
             )
 
             write_test_properties(test_properties_throughput)
@@ -97,7 +117,9 @@ if args.read:
             time.sleep(30)
 
             test_properties_latency = latency_test_template.substitute(
-                clazz=READ_TEST_CLASS_NAME, kind=kind, size=size
+                clazz=READ_TEST_CLASS_NAME,
+                kind=kind,
+                size=size,
             )
 
             write_test_properties(test_properties_latency)
@@ -106,7 +128,7 @@ if args.read:
             time.sleep(30)
 
 if args.query:
-    for kind in OBJECT_KINDS:
+    for kind in OBJECT_KINDS[:-1]:
         test_properties_throughput = query_throughput_test_template.substitute(
             clazz=QUERY_TEST_CLASS_NAME,
             kind=kind,
@@ -124,3 +146,35 @@ if args.query:
         subprocess.run(["bash", "run.sh", f"query_{kind}_latency"])
 
         time.sleep(30)
+
+if args.old_engine_query:
+    for kind in OBJECT_KINDS[:-1]:
+        for size in OBJECT_SIZES:
+            test_properties_throughput = (
+                old_engine_query_throughput_test_template.substitute(
+                    clazz=OLD_QUERY_ENGINE_TEST_CLASS_NAME,
+                    kind=kind,
+                    size=size,
+                )
+            )
+            write_test_properties(test_properties_throughput)
+            subprocess.run(
+                ["bash", "run.sh", f"old_engine_query_{kind}_{size}_throughput"]
+            )
+
+            time.sleep(30)
+
+            test_properties_latency = (
+                old_engine_query_throughput_test_template.substitute(
+                    clazz=OLD_QUERY_ENGINE_TEST_CLASS_NAME,
+                    kind=kind,
+                    size=size,
+                )
+            )
+
+            write_test_properties(test_properties_latency)
+            subprocess.run(
+                ["bash", "run.sh", f"old_engine_query_{kind}_{size}_latency"]
+            )
+
+            time.sleep(30)

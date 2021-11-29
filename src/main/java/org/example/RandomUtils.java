@@ -36,6 +36,10 @@ public class RandomUtils {
 
     public byte[] randomByteArray() {
         int length = 20;
+        return randomByteArray(length);
+    }
+
+    public byte[] randomByteArray(int length) {
         byte[] arr = new byte[length];
         random.nextBytes(arr);
         return arr;

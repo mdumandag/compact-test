@@ -1,6 +1,6 @@
 package org.example.objects;
 
-public class LargeCompact implements TestObject {
+public class LargeCompact {
 
     private boolean booleanField;
     private boolean[] booleanArrayField;
@@ -114,37 +114,4 @@ public class LargeCompact implements TestObject {
         return objectArrayField;
     }
 
-    @Override
-    public String getCreateMappingStatement(String mapName) {
-        return String.format(
-                "CREATE MAPPING \"%s\" (\n"
-                + "  \"booleanArrayField\" OBJECT,\n"
-                + "  \"booleanField\" BOOLEAN,\n"
-                + "  \"byteArrayField\" OBJECT,\n"
-                + "  \"byteField\" TINYINT,\n"
-                + "  \"doubleArrayField\" OBJECT,\n"
-                + "  \"doubleField\" DOUBLE,\n"
-                + "  \"floatArrayField\" OBJECT,\n"
-                + "  \"floatField\" REAL,\n"
-                + "  \"intArrayField\" OBJECT,\n"
-                + "  \"intField\" INTEGER,\n"
-                + "  \"longArrayField\" OBJECT,\n"
-                + "  \"longField\" BIGINT,\n"
-                + "  \"objectArrayField\" OBJECT,\n"
-                + "  \"objectField\" OBJECT,\n"
-                + "  \"shortArrayField\" OBJECT,\n"
-                + "  \"shortField\" SMALLINT,\n"
-                + "  \"stringArrayField\" OBJECT,\n"
-                + "  \"stringField\" VARCHAR\n"
-                + ")\n"
-                + "TYPE IMap\n"
-                + "OPTIONS (\n"
-                + "  'keyFormat' = 'java',\n"
-                + "  'keyJavaClass' = 'java.lang.Integer',\n"
-                + "  'valueFormat' = 'compact',\n"
-                + "  'valueCompactTypeName' = 'large'\n"
-                + ")",
-                mapName
-        );
-    }
 }

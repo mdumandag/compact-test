@@ -1,6 +1,6 @@
 package org.example.objects;
 
-public class SmallCompact implements TestObject {
+public class SmallCompact {
 
     private int intField;
     private double doubleField;
@@ -28,26 +28,6 @@ public class SmallCompact implements TestObject {
 
     public String getStringField() {
         return stringField;
-    }
-
-    @Override
-    public String getCreateMappingStatement(String mapName) {
-        return String.format(
-                "CREATE MAPPING \"%s\" (\n"
-                + "  \"doubleField\" DOUBLE,\n"
-                + "  \"intField\" INTEGER,\n"
-                + "  \"longField\" BIGINT,\n"
-                + "  \"stringField\" VARCHAR\n"
-                + ")\n"
-                + "TYPE IMap\n"
-                + "OPTIONS (\n"
-                + "  'keyFormat' = 'java',\n"
-                + "  'keyJavaClass' = 'java.lang.Integer',\n"
-                + "  'valueFormat' = 'compact',\n"
-                + "  'valueCompactTypeName' = 'small'"
-                + ")",
-                mapName
-        );
     }
 
 }

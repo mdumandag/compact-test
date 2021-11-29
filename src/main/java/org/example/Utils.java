@@ -7,7 +7,7 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.simulator.worker.loadsupport.Streamer;
 import com.hazelcast.simulator.worker.loadsupport.StreamerFactory;
 import org.apache.log4j.Logger;
-import org.example.objects.TestObject;
+import org.example.objects.Mappings;
 import org.example.objects.TestObjectFactory;
 
 import java.util.Map;
@@ -39,19 +39,19 @@ public final class Utils {
         logger.info("Total memory cost: " + totalMemoryCost);
     }
 
-    public static void fillMap(IMap<Integer, TestObject> map, int itemCount, ObjectKind objectKind, ObjectSize objectSize) {
-        Streamer<Integer, TestObject> streamer = StreamerFactory.getInstance(map);
+    public static void fillMap(IMap<Integer, Object> map, int itemCount, ObjectKind objectKind, ObjectSize objectSize) {
+        Streamer<Integer, Object> streamer = StreamerFactory.getInstance(map);
 
         for(int i = 0; i < itemCount; i++) {
-            TestObject o = TestObjectFactory.createRandomized(objectKind, objectSize);
+            Object o = TestObjectFactory.createRandomized(objectKind, objectSize);
             streamer.pushEntry(i, o);
         }
 
         streamer.await();
     }
 
-    public static void createMapping(HazelcastInstance instance, String mapName, ObjectKind objectKind, ObjectSize objectSize) {
-        String createMappingStatement = TestObjectFactory.createRandomized(objectKind, objectSize).getCreateMappingStatement(mapName);
+    public static void createMapping(HazelcastInstance instance, String mapName, ObjectKind objectKind) {
+        String createMappingStatement = Mappings.mappingFor(objectKind, mapName);
         instance.getSql().execute(createMappingStatement);
     }
 

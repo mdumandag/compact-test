@@ -10,7 +10,6 @@ import com.hazelcast.simulator.test.annotations.Verify;
 import org.example.ObjectKind;
 import org.example.ObjectSize;
 import org.example.Utils;
-import org.example.objects.TestObject;
 import org.example.objects.TestObjectFactory;
 
 
@@ -21,8 +20,8 @@ public class WriteTest extends HazelcastTest {
 
     public int itemCount = 100_000;
 
-    private TestObject value;
-    private IMap<Integer, TestObject> map;
+    private Object value;
+    private IMap<Integer, Object> map;
     private IExecutorService executorService;
 
     @Setup

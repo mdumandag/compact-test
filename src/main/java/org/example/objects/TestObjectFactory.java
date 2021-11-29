@@ -1,5 +1,8 @@
 package org.example.objects;
 
+import com.hazelcast.internal.serialization.Data;
+import com.hazelcast.internal.serialization.InternalSerializationService;
+import com.hazelcast.internal.serialization.impl.DefaultSerializationServiceBuilder;
 import com.hazelcast.nio.serialization.Portable;
 import org.example.ObjectKind;
 import org.example.ObjectSize;
@@ -34,7 +37,7 @@ public class TestObjectFactory {
 
     private static final RandomUtils randomUtils = new RandomUtils(42);
 
-    public static TestObject create(ObjectKind objectKind, ObjectSize objectSize) {
+    public static Object create(ObjectKind objectKind, ObjectSize objectSize) {
         switch (objectKind) {
             case COMPACT:
                 switch (objectSize) {
@@ -135,12 +138,14 @@ public class TestObjectFactory {
                     default:
                         throwForUnknownObjectSize(objectSize);
                 }
+            case BYTE_ARRAY:
+                return createByteArray(objectSize, false);
             default:
                 throw new IllegalStateException("Unknown object kind: " + objectKind);
         }
     }
 
-    public static TestObject createRandomized(ObjectKind objectKind, ObjectSize objectSize) {
+    public static Object createRandomized(ObjectKind objectKind, ObjectSize objectSize) {
         switch (objectKind) {
             case COMPACT:
                 switch (objectSize) {
@@ -173,7 +178,7 @@ public class TestObjectFactory {
             case PORTABLE:
                 switch (objectSize) {
                     case SMALL:
-                        return (TestObject) randomUtils.randomSmallPortable();
+                        return randomUtils.randomSmallPortable();
                     case LARGE:
                         return new LargePortable(
                                 randomUtils.randomBoolean(),
@@ -226,6 +231,8 @@ public class TestObjectFactory {
                     default:
                         throwForUnknownObjectSize(objectSize);
                 }
+            case BYTE_ARRAY:
+                return createByteArray(objectSize, true);
             default:
                 throw new IllegalStateException("Unknown object kind: " + objectKind);
         }
@@ -233,6 +240,24 @@ public class TestObjectFactory {
 
     private static void throwForUnknownObjectSize(ObjectSize objectSize) {
         throw new IllegalStateException("Unknown object size: " + objectSize);
+    }
+
+    private static byte[] createByteArray(ObjectSize objectSize, boolean isRandomized) {
+        int size = getSerializedSizeOfIdentified(objectSize, isRandomized);
+        return randomUtils.randomByteArray(size);
+    }
+
+    private static int getSerializedSizeOfIdentified(ObjectSize objectSize, boolean isRandomized) {
+        Object o;
+        if (isRandomized) {
+            o = createRandomized(ObjectKind.IDENTIFIED, objectSize);
+        } else {
+            o = create(ObjectKind.IDENTIFIED, objectSize);
+        }
+
+        InternalSerializationService service = new DefaultSerializationServiceBuilder().build();
+        Data data = service.toData(o);
+        return data.dataSize();
     }
 
 }

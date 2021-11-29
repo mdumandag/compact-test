@@ -7,7 +7,7 @@ import org.example.serialization.PortableObjectFactory;
 
 import java.io.IOException;
 
-public class LargePortable implements Portable, TestObject {
+public class LargePortable implements Portable {
 
     public static final int CLASS_ID = 2;
 
@@ -107,42 +107,6 @@ public class LargePortable implements Portable, TestObject {
         stringArrayField = reader.readStringArray(FieldNames.STRING_ARRAY);
         objectField = reader.readPortable(FieldNames.OBJECT);
         objectArrayField = reader.readPortableArray(FieldNames.OBJECT_ARRAY);
-    }
-
-    @Override
-    public String getCreateMappingStatement(String mapName) {
-        return String.format(
-                "CREATE MAPPING \"%s\" (\n"
-                + "  \"booleanArrayField\" OBJECT,\n"
-                + "  \"booleanField\" BOOLEAN,\n"
-                + "  \"byteArrayField\" OBJECT,\n"
-                + "  \"byteField\" TINYINT,\n"
-                + "  \"doubleArrayField\" OBJECT,\n"
-                + "  \"doubleField\" DOUBLE,\n"
-                + "  \"floatArrayField\" OBJECT,\n"
-                + "  \"floatField\" REAL,\n"
-                + "  \"intArrayField\" OBJECT,\n"
-                + "  \"intField\" INTEGER,\n"
-                + "  \"longArrayField\" OBJECT,\n"
-                + "  \"longField\" BIGINT,\n"
-                + "  \"objectArrayField\" OBJECT,\n"
-                + "  \"objectField\" OBJECT,\n"
-                + "  \"shortArrayField\" OBJECT,\n"
-                + "  \"shortField\" SMALLINT,\n"
-                + "  \"stringArrayField\" OBJECT,\n"
-                + "  \"stringField\" VARCHAR\n"
-                + ")\n"
-                + "TYPE IMap\n"
-                + "OPTIONS (\n"
-                + "  'keyFormat' = 'java',\n"
-                + "  'keyJavaClass' = 'java.lang.Integer',\n"
-                + "  'valueFormat' = 'portable',\n"
-                + "  'valuePortableFactoryId' = '1',\n"
-                + "  'valuePortableClassId' = '2',\n"
-                + "  'valuePortableClassVersion' = '0'\n"
-                + ")",
-                mapName
-        );
     }
 
 }

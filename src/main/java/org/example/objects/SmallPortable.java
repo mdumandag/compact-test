@@ -7,7 +7,7 @@ import org.example.serialization.PortableObjectFactory;
 
 import java.io.IOException;
 
-public class SmallPortable implements Portable, TestObject {
+public class SmallPortable implements Portable {
 
     public static final int CLASS_ID = 1;
 
@@ -51,28 +51,6 @@ public class SmallPortable implements Portable, TestObject {
         doubleField = reader.readDouble(FieldNames.DOUBLE);
         longField = reader.readLong(FieldNames.LONG);
         stringField = reader.readString(FieldNames.STRING);
-    }
-
-    @Override
-    public String getCreateMappingStatement(String mapName) {
-        return String.format(
-                "CREATE MAPPING \"%s\" (\n"
-                + "  \"doubleField\" DOUBLE,\n"
-                + "  \"intField\" INTEGER,\n"
-                + "  \"longField\" BIGINT,\n"
-                + "  \"stringField\" VARCHAR\n"
-                + ")\n"
-                + "TYPE IMap\n"
-                + "OPTIONS (\n"
-                + "  'keyFormat' = 'java',\n"
-                + "  'keyJavaClass' = 'java.lang.Integer',\n"
-                + "  'valueFormat' = 'portable',\n"
-                + "  'valuePortableFactoryId' = '1',\n"
-                + "  'valuePortableClassId' = '1',\n"
-                + "  'valuePortableClassVersion' = '0'\n"
-                + ")",
-                mapName
-        );
     }
 
 }

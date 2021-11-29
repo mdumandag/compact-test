@@ -1,19 +1,19 @@
 package org.example.tests;
 
-import com.hazelcast.core.IExecutorService;
 import com.hazelcast.map.IMap;
+import com.hazelcast.query.Predicate;
+import com.hazelcast.query.Predicates;
 import com.hazelcast.simulator.hz.HazelcastTest;
-import com.hazelcast.simulator.test.BaseThreadState;
 import com.hazelcast.simulator.test.annotations.Prepare;
 import com.hazelcast.simulator.test.annotations.Setup;
 import com.hazelcast.simulator.test.annotations.TimeStep;
-import com.hazelcast.simulator.test.annotations.Verify;
 import org.example.ObjectKind;
 import org.example.ObjectSize;
 import org.example.Utils;
 
+import java.util.Collection;
 
-public class ReadTest extends HazelcastTest {
+public class OldQueryEngineTest extends HazelcastTest {
 
     public ObjectKind objectKind = ObjectKind.COMPACT;
     public ObjectSize objectSize = ObjectSize.SMALL;
@@ -21,12 +21,12 @@ public class ReadTest extends HazelcastTest {
     public int itemCount = 100_000;
 
     private IMap<Integer, Object> map;
-    private IExecutorService executorService;
+    private Predicate<Integer, Object> predicate;
 
     @Setup
     public void setUp() {
         map = targetInstance.getMap(name);
-        executorService = targetInstance.getExecutorService(name);
+        predicate = Predicates.equal("stringField", "metin");
     }
 
     @Prepare(global = true)
@@ -34,14 +34,9 @@ public class ReadTest extends HazelcastTest {
         Utils.fillMap(map, itemCount, objectKind, objectSize);
     }
 
-    @Verify(global = true)
-    public void logEntryStats() {
-        Utils.logEntryStats(logger, executorService, map.getName());
-    }
-
     @TimeStep
-    public Object get(BaseThreadState state) {
-        return map.get(state.randomInt(itemCount));
+    public Collection<Object> query() {
+        return map.values(predicate);
     }
 
 }

@@ -7,7 +7,7 @@ import org.example.serialization.IdentifiedObjectFactory;
 
 import java.io.IOException;
 
-public class SmallIdentified implements IdentifiedDataSerializable, TestObject {
+public class SmallIdentified implements IdentifiedDataSerializable {
 
     public static final int CLASS_ID = 1;
 
@@ -67,26 +67,6 @@ public class SmallIdentified implements IdentifiedDataSerializable, TestObject {
 
     public String getStringField() {
         return stringField;
-    }
-
-    @Override
-    public String getCreateMappingStatement(String mapName) {
-        return String.format(
-                "CREATE MAPPING \"%s\" (\n"
-                + "  \"doubleField\" DOUBLE,\n"
-                + "  \"intField\" INTEGER,\n"
-                + "  \"longField\" BIGINT,\n"
-                + "  \"stringField\" VARCHAR\n"
-                + ")\n"
-                + "TYPE IMap\n"
-                + "OPTIONS (\n"
-                + "  'keyFormat' = 'java',\n"
-                + "  'keyJavaClass' = 'java.lang.Integer',\n"
-                + "  'valueFormat' = 'java',\n"
-                + "  'valueJavaClass' = 'org.example.objects.SmallIdentified'"
-                + ")",
-                mapName
-        );
     }
 
 }
