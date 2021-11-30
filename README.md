@@ -3,7 +3,10 @@
 This project contains the simulator tests to compare
 the new serialization format (called Compact) with
 the other Hazelcast alternatives such as Portable and
-IdentifiedDataSerializable.
+IdentifiedDataSerializable. Also, in some of the tests,
+we will use a byte array with the size similar to 
+serialized size of the IdentifiedDataSerializable objects
+and use that as a baseline.
 
 The test code defines two types of objects:
 small and large, in terms of the number of fields they
@@ -44,7 +47,7 @@ IdentifiedDataSerializable, but it was pretty easy to
 represent that with the equivalent layout in the binary
 by writing the length and the array items one by one.).
 
-There are three types of benchmarks executed.
+There are four types of benchmarks executed.
 
 ## Write Benchmark
 
@@ -55,11 +58,12 @@ is limited to ``100_000`` items.
 
 The benchmark is parameterized over 2 properties: object kind
 and object size. Object kind represents the kind of the objects
-that will be written into a map, as ``COMPACT``, ``PORTABLE``, and
-``IDENTIFIED``. Object size controls the number of fields, as
-described above, and takes the values of ``SMALL`` and ``LARGE``.
-So, we will test 6 different setups and measure throughput and
-latency separately, which results in 12 test runs.
+that will be written into a map, as ``COMPACT``, ``PORTABLE``,
+``IDENTIFIED``, and ``BYTE_ARRAY``. Object size controls the 
+number of fields, as described above, and takes the values 
+of ``SMALL`` and ``LARGE``. So, we will test eight different 
+setups and measure throughput and latency separately, which 
+results in fourteen test runs.
 
 At the end of the test, we will also report the number of
 entries in the map and the memory cost of those entries
@@ -92,20 +96,34 @@ Query benchmark is structured differently than the other
 two benchmarks, as we are using the new SQL engine in the
 benchmarks, and it does not support arrays and nested objects
 yet. So, the query benchmark is not parameterized over the
-object sizes, but only over the object kinds.
+object sizes, but only over the object kinds. Also, we won't
+use the ``BYTE_ARRAY`` object kind, as it is not logical
+to have it in this test setup.
 
-In the timestep method of the benchmark, we simply execute
+In the timestep method of the benchmark, we execute
 the following query over and over.
 
 ```SQL
 SELECT * FROM map_name WHERE stringField = 'metin'
 ```
 
+## Query Benchmark - Old Query Engine
+
+This is the same query test but run against the old
+query engine using ``map#values`` with an ``EqualPredicate``.
+
+In the timestep method of the benchmark, we execute
+the following query over and over.
+
+```java
+map.values(Predicates.equal("stringField", "metin"));
+```
+
 # Benchmark Setup
 
 The benchmarks are run on the LAB machines we have.
-We have dedicated 2 machines to 2 members and used
-the other machine for clients and initiated 12 clients
+We have dedicated two machines to two members and used
+the other machine for clients and initiated twelve clients
 there to generate an adequate amount of load.
 
 We haven't modified any defaults and used everything
@@ -126,7 +144,7 @@ of different benchmark setups (``test_runner.py``).
 It can be executed with commands like
 
 ```bash
-python test_runner.py --[query|read|write]
+python test_runner.py --[query|read|write|old-engine-query]
 ```
 
 to execute different kinds of benchmarks. It takes care
@@ -156,6 +174,7 @@ in the ``simulator.properties``, don't forget to put
 | COMPACT    | 100000      | 18400000    | 184                    |
 | PORTABLE   | 100000      | 26200000    | 262                    |
 | IDENTIFIED | 100000      | 18000000    | 180                    |
+| BYTE_ARRAY | 100000      | 18400000    | 184                    |
 
 > Reported as the sum of ``OwnedEntryMemoryCost`` of all members
 > local map stats divided by the entry count.
@@ -173,6 +192,7 @@ in the ``simulator.properties``, don't forget to put
 | COMPACT    | 100000      | 54600000    | 546                   |
 | PORTABLE   | 100000      | 103700000   | 1037                  |
 | IDENTIFIED | 100000      | 50800000    | 508                   |
+| BYTE_ARRAY | 100000      | 51200000    | 512                   |
 
 
 ### Write Large Objects - Latency
@@ -190,6 +210,7 @@ in the ``simulator.properties``, don't forget to put
 | COMPACT    | 100000      | 17200000    | 172                   |
 | PORTABLE   | 100000      | 25000000    | 250                   |
 | IDENTIFIED | 100000      | 16800000    | 168                   |
+| BYTE_ARRAY | 100000      | 17200000    | 172                   |
 
 
 ### Read Small Objects - Latency
@@ -205,6 +226,7 @@ in the ``simulator.properties``, don't forget to put
 | COMPACT    | 100000      | 60000000    | 600                   |
 | PORTABLE   | 100000      | 116600000   | 1166                  |
 | IDENTIFIED | 100000      | 56300000    | 563                   |
+| BYTE_ARRAY | 100000      | 56700000    | 567                   |
 
 
 ### Read Large Objects - Latency
@@ -220,3 +242,21 @@ in the ``simulator.properties``, don't forget to put
 ### Query - Latency
 
 ![query-small-latency](images/query-latency.png)
+
+## Query - Old Engine
+
+### Query - Old Engine - Small Objects - Throughput
+
+![query-old-engine-small-throughput](images/query-old-engine-small-throughput.png)
+
+### Query - Old Engine - Small Objects - Latency
+
+![query-old-engine-small-latency](images/query-old-engine-small-latency.png)
+
+### Query - Old Engine - Large Objects - Throughput
+
+![query-old-engine-large-throughput](images/query-old-engine-large-throughput.png)
+
+### Query - Old Engine - Large Objects - Latency
+
+![query-old-engine-large-latency](images/query-old-engine-large-latency.png)
