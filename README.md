@@ -38,7 +38,7 @@ Large objects have the following fields:
 - String
 - String[]
 - nested small object
-- array of nested small objects
+- an array of nested small objects
 
 The fields are chosen so that they are supported in the
 serialization formats we test out-of-the-box (with the
@@ -56,8 +56,8 @@ Write benchmark performs ``map#set`` (not
 old value) over and over. The item count of the map
 is limited to ``100_000`` items.
 
-The benchmark is parameterized over 2 properties: object kind
-and object size. Object kind represents the kind of the objects
+The benchmark is parameterized over two properties: object kind
+and object size. Object kind represents the kind of objects
 that will be written into a map, as ``COMPACT``, ``PORTABLE``,
 ``IDENTIFIED``, and ``BYTE_ARRAY``. Object size controls the 
 number of fields, as described above, and takes the values 
@@ -71,7 +71,7 @@ in the log, so that we can compare that as well, along with
 the throughput and latency numbers.
 
 To not deal with the cost of random object generation, and
-truly measure the cost of serialization and writes, in
+truly measure the cost of serialization and writes, in the
 write test, we will create objects with the same values
 in the setup phase, and write that to the map as a value
 for every key.
@@ -85,14 +85,14 @@ In the setup phase, we will fill the map with randomized
 values. However, the different test setups do not measure
 the cost of reading the potentially different values because
 the random field generator is seeded with the same value
-and we have fixed lengths for variable sized fields (like
+and we have fixed lengths for variable-sized fields (like
 fixed-length random strings, fixed-length arrays). So, every
 object in the map has the same size, in terms of the size
 of their fields.
 
 ## Query Benchmark
 
-Query benchmark is structured differently than the other
+The query benchmark is structured differently than the other
 two benchmarks, as we are using the new SQL engine in the
 benchmarks, and it does not support arrays and nested objects
 yet. So, the query benchmark is not parameterized over the
@@ -109,8 +109,11 @@ SELECT * FROM map_name WHERE stringField = 'metin'
 
 ## Query Benchmark - Old Query Engine
 
-This is the same query test but run against the old
+This is the same query test but runs against the old
 query engine using ``map#values`` with an ``EqualPredicate``.
+
+Also, since the old engine supports arrays and nested objects,
+so we also parameterized the tests over objects sizes as well.
 
 In the timestep method of the benchmark, we execute
 the following query over and over.
