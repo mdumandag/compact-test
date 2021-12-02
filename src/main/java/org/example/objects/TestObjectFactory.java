@@ -12,10 +12,17 @@ import java.nio.charset.StandardCharsets;
 
 public class TestObjectFactory {
 
+    private static final RandomUtils randomUtils = new RandomUtils(42);
+
     private static final boolean aBoolean = true;
     private static final boolean[] aBooleanArray = new boolean[]{true, false, true};
     private static final byte aByte = -99;
     private static final byte[] aByteArray = "Lorem ipsum dolor sit amet.".getBytes(StandardCharsets.UTF_8);
+
+    private static final byte[] aByteArrayForCompact = randomUtils.randomByteArray(518);
+    private static final byte[] aByteArrayForIdentified = randomUtils.randomByteArray(556);
+    private static final byte[] aLargeByteArray = randomUtils.randomByteArray(913);
+
     private static final short aShort = Short.MIN_VALUE;
     private static final short[] aShortArray = new short[]{0, 1, 2, 3, -5, Short.MAX_VALUE};
     private static final int anInt = 42;
@@ -35,8 +42,6 @@ public class TestObjectFactory {
     private static final SmallIdentified aSmallIdentified = new SmallIdentified(anInt, aDouble, aLong, aString);
     private static final SmallIdentified[] aSmallIdentifiedArray = new SmallIdentified[]{aSmallIdentified};
 
-    private static final RandomUtils randomUtils = new RandomUtils(42);
-
     public static Object create(ObjectKind objectKind, ObjectSize objectSize) {
         switch (objectKind) {
             case COMPACT:
@@ -53,7 +58,7 @@ public class TestObjectFactory {
                                 aBoolean,
                                 aBooleanArray,
                                 aByte,
-                                aByteArray,
+                                aByteArrayForCompact,
                                 aShort,
                                 aShortArray,
                                 anInt,
@@ -119,7 +124,7 @@ public class TestObjectFactory {
                                 aBoolean,
                                 aBooleanArray,
                                 aByte,
-                                aByteArray,
+                                aByteArrayForIdentified,
                                 aShort,
                                 aShortArray,
                                 anInt,
@@ -139,6 +144,9 @@ public class TestObjectFactory {
                         throwForUnknownObjectSize(objectSize);
                 }
             case BYTE_ARRAY:
+                if (objectSize == ObjectSize.LARGE) {
+                    return aLargeByteArray;
+                }
                 return createByteArray(objectSize, false);
             default:
                 throw new IllegalStateException("Unknown object kind: " + objectKind);
