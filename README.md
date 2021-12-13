@@ -250,16 +250,16 @@ in the ``simulator.properties``, don't forget to put
 
 ### Query - Old Engine - Small Objects - Throughput
 
-![query-old-engine-small-throughput](images/query-old-engine-small-throughput.png)
+![old-engine-query-small-throughput](images/old-engine-query-small-throughput.png)
 
 ### Query - Old Engine - Small Objects - Latency
 
-![query-old-engine-small-latency](images/query-old-engine-small-latency.png)
+![old-engine-query-small-latency](images/old-engine-query-small-latency.png)
 
 ### Query - Old Engine - Large Objects - Throughput
 
-![query-old-engine-large-throughput](images/query-old-engine-large-throughput.png)
+![old-engine-query-large-throughput](images/old-engine-query-large-throughput.png)
 
 ### Query - Old Engine - Large Objects - Latency
 
-![query-old-engine-large-latency](images/query-old-engine-large-latency.png)
+![old-engine-query-large-latency](images/old-engine-query-large-latency.png)
